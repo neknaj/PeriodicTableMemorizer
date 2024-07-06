@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/neknaj/webSplitLayout/type1/layout.css"></head>
+        <script src="https://cdn.jsdelivr.net/gh/neknaj/webSplitLayout/type1/layout.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/neknaj/cDom/cdom.js"></script>
+        <meta property="og:title" content="PeriodicTable Memorizer">
+        <meta property="og:description" content="タイピングで周期表を丸暗記しよう">
+        <meta property="twitter:description" content="タイピングで周期表を丸暗記しよう">
+        <meta property="description" content="タイピングで周期表を丸暗記しよう">
+        <meta name="application-name" content="PeriodicTable Memorizer">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="@bem130">
+    </head>
+    <body></body>
+</html>
+<script>
+
+const none = false;
+const periodicTable = [
+    ["H" ,none,none,none,none,none,none,none,none,none,none,none,none,none,none,none,none,"He"],
+    ["Li","Be",none,none,none,none,none,none,none,none,none,none,"B" ,"C" ,"N" ,"O" ,"F" ,"Ne"],
+    ["Na","Mg",none,none,none,none,none,none,none,none,none,none,"Al","Si","P" ,"S" ,"Cl","Ar"],
+    ["K" ,"Ca","Sc","Ti","V" ,"Cr","Mn","Fe","Co","Ni","Cu","Zn","Ga","Ge","As","Se","Br","Kr"],
+    ["Rb","Sr","Y" ,"Zr","Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd","In","Sn","Sb","Te","I" ,"Xe"],
+    ["Cs","Ba",none,"Hf","Ta","W" ,"Re","Os","Ir","Pt","Au","Hg","Tl","Pb","Bi","Po","At","Rn"],
+    ["Fr","Ra",none,"Rf","Ib","Sg","Bh","Hs","Mt","Ds","Rg","Cn","Nh","Fl","Mc","Lv","Ts","Og"],
+    [none,none,"La","Ce","Pr","Nd","Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb","Lu",none],
+    [none,none,"Ac","Th","Pa","U" ,"Np","Pu","Am","Cm","Bk","Cf","Es","Fm","Md","No","Lr",none],
+]
+
+initlayout(
+    document.querySelector("body"),
+    ["h",[5,1],[
+        ["v",[4,1],[["c","table"],["c","input"]]],
+        ["v",[5,2],[["c","history"],["c","score"]]],
+    ]],
+    {
+        table: ()=>{return elm("table",{class:["periodic"]},periodicTable.map((i)=>{
+            return elm("tr",{},i.map((j)=>{
+                return j?elm("td",{class:["dark"]},[elm("p",{},[textelm(j)])]):elm("td",{},[]);
+            }))
+        }))},
+        input: ()=>{return elm("div",{tabIndex:1,class:["inputarea"]},[
+            elm("div",{class:["inputelm"]},[
+                elm("div",{class:["inputtext"]},[]),
+                elm("div",{class:["cursor"]},[]),
+                elm("span",{class:["cursor"]},[]),
+            ]),
+            elm("p",{},[textelm("Enter any element symbol in the box above")]),
+        ])},
+        history: ()=>{return elm("h1",{},[textelm("history")])},
+        score: ()=>{return elm("h1",{},[textelm("score")])},
+        result: ()=>{return elm("h1",{},[textelm("result")])},
+        empty: ()=>{return elm("h1",{},[textelm("empty")])},
+    }
+)
+
+</script>
+<style>
+
+:root {
+    color-scheme: dark;
+    user-select: none;
+}
+body {
+    margin: 0;
+    padding: 0;
+    height: 100dvh;
+    width: 100dvw;
+    overflow: hidden;
+}
+#layoutroot {
+    height: 100%;
+    width: 100%;
+}
+
+h1 {
+    padding: 5px;
+    margin: 5px;
+}
+
+</style>
+<style>
+
+.periodic {
+    padding: 10px;
+    table-layout: fixed;
+    width: fit-content;
+    height: fit-content;
+    & td {
+        font-size: 30px;
+        width: 100%;
+        height: 100%;
+        & p {
+            border: 1px solid black;
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            border-radius: 10px;
+            padding: 10px;
+            margin: 0;
+            background-color: rgba(240, 248, 255, 0.2);
+        }
+        &.hide p {
+            color: transparent;
+        }
+        &.dark p {
+            color: black;
+        }
+    }
+    & tr:nth-child(8) td {
+        padding-top: 20px;
+    }
+}
+
+.inputarea {
+    width: fit-content;
+    height: fit-content;
+    position: relative;
+    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%;
+    & p {
+        margin: 0;
+        padding: 0;
+    }
+    & .inputelm {
+        width: 300px;
+        height: 100px;
+        padding: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        display: inline-block;
+        & .cursor {
+            height: 100%;
+            width: 2px;
+            margin-left: 10px;
+            background-color: rgb(116, 116, 116);
+            animation: blink 1.2s cubic-bezier(0.1,0.8,0.1,1) infinite;
+        }
+    }
+}
+
+@keyframes blink{
+    0% {opacity:0;}
+    50% {opacity:1;}
+    100% {opacity:0;}
+}
+</style>
