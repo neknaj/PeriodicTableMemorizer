@@ -1,2 +1,2 @@
-# PeriodicTableTyping
+# PeriodicTableMemorizer
 タイピングで周期表を丸暗記しよう
