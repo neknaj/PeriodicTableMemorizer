@@ -24,7 +24,7 @@ const periodicTable = [
     ["K" ,"Ca","Sc","Ti","V" ,"Cr","Mn","Fe","Co","Ni","Cu","Zn","Ga","Ge","As","Se","Br","Kr"],
     ["Rb","Sr","Y" ,"Zr","Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd","In","Sn","Sb","Te","I" ,"Xe"],
     ["Cs","Ba",none,"Hf","Ta","W" ,"Re","Os","Ir","Pt","Au","Hg","Tl","Pb","Bi","Po","At","Rn"],
-    ["Fr","Ra",none,"Rf","Ib","Sg","Bh","Hs","Mt","Ds","Rg","Cn","Nh","Fl","Mc","Lv","Ts","Og"],
+    ["Fr","Ra",none,"Rf","Db","Sg","Bh","Hs","Mt","Ds","Rg","Cn","Nh","Fl","Mc","Lv","Ts","Og"],
     [none,none,"La","Ce","Pr","Nd","Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb","Lu",none],
     [none,none,"Ac","Th","Pa","U" ,"Np","Pu","Am","Cm","Bk","Cf","Es","Fm","Md","No","Lr",none],
 ]
@@ -43,8 +43,7 @@ initlayout(
         }))},
         input: ()=>{return elm("div",{tabIndex:1,class:["inputarea"]},[
             elm("div",{class:["inputelm"]},[
-                elm("div",{class:["inputtext"]},[]),
-                elm("div",{class:["cursor"]},[]),
+                elm("span",{class:["inputtext"]},[]),
                 elm("span",{class:["cursor"]},[]),
             ]),
             elm("p",{},[textelm("Enter any element symbol in the box above")]),
@@ -56,12 +55,89 @@ initlayout(
     }
 )
 
+const state = {
+    inputtext: "",
+    start: 0,
+    end: 0,
+    flag: undefined,
+    nestyle: "hide"
+}
+
+initFlag();
+updatePeriodicTable();
+document.querySelector(".inputarea").focus();
+
+function initFlag() {
+    state.flag = new Array(periodicTable.length).fill(0).map((x)=>{return new Array(periodicTable[0].length).fill(false)});
+    for (let i in periodicTable) {
+        for (let j in periodicTable[i]) {
+            if (periodicTable[i][j]==false) {
+                state.flag[i][j] = true;
+            }
+        }
+    }
+}
+
+document.querySelector(".inputarea").addEventListener("keydown",(e)=>{
+    console.log(e)
+    if (e.key.match(/^[a-z]/)) {
+        console.log(e.key);
+        state.inputtext += e.key;
+    }
+    else if (e.key=="Backspace") {
+        state.inputtext = state.inputtext.slice(0,-1);
+    }
+    else if (e.key=="Enter"||e.key==" ") {
+        const res = checkInput(state.inputtext);
+        if (res!=false) {
+            state.flag[res[0]][res[1]] = true;
+        }
+        state.inputtext = "";
+    }
+    updateInputArea();
+    updatePeriodicTable();
+},false)
+
+function updateInputArea() {
+    document.querySelector(".inputtext").innerHTML = "";
+    for (let i in state.inputtext) {
+        document.querySelector(".inputtext").innerText += i==0?state.inputtext[i].toUpperCase():state.inputtext[i];
+    }
+}
+function updatePeriodicTable() {
+    for (let i in state.flag) {
+        for (let j in state.flag[i]) {
+            const elm = document.querySelector(`.periodic > tr:nth-child(${Number(i)+1}) > td:nth-child(${Number(j)+1})`);
+            elm.classList.remove("dark");
+            elm.classList.remove("hide");
+            if (!state.flag[i][j]) {
+                elm.classList.add(state.nestyle);
+            }
+        }
+    }
+}
+function checkInput(input) {
+    for (let i in periodicTable) {
+        for (let j in periodicTable[i]) {
+            if (periodicTable[i][j]!=false) {
+                if (periodicTable[i][j].toLowerCase()==input) {
+                    return [i,j];
+                }
+            }
+        }
+    }
+    return false;
+}
+
 </script>
 <style>
 
 :root {
     color-scheme: dark;
     user-select: none;
+}
+:root {
+    font-family: serif;
 }
 body {
     margin: 0;
@@ -120,22 +196,38 @@ h1 {
     transform: translate(-50%,-50%);
     top: 50%;
     left: 50%;
+    outline: none;
     & p {
         margin: 0;
         padding: 0;
     }
     & .inputelm {
-        width: 300px;
+        width: fit-content;
+        min-width: 300px;
         height: 100px;
         padding: 8px;
         border: 1px solid rgba(255, 255, 255, 0.4);
         display: inline-block;
+        & .inputtext {
+            vertical-align: top;
+            display: inline-block;
+            font-size: 70px;
+        }
         & .cursor {
+            vertical-align: top;
+            display: inline-block;
             height: 100%;
             width: 2px;
             margin-left: 10px;
             background-color: rgb(116, 116, 116);
-            animation: blink 1.2s cubic-bezier(0.1,0.8,0.1,1) infinite;
+            border-radius: 1px;
+        }
+    }
+    &:focus {
+        & .inputelm {
+            & .cursor {
+                animation: blink 1.2s cubic-bezier(0.1,0.8,0.1,1) infinite;
+            }
         }
     }
 }
