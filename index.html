@@ -78,10 +78,10 @@ initlayout(
             }));
             setInterval(() => {
                 table.style.setProperty('--periodictable-fontsize',
-                    (table.getBoundingClientRect().width/periodicTable[0].length/2)+"px"
+                    (table.parentElement.getBoundingClientRect().width/periodicTable[0].length/2)+"px"
                 );
             }, 10);
-            return elm("div",{class:"center"},[table]);
+            return elm("div",{class:"center",id:"tablearea"},[table]);
         },
         input: ()=>{return elm("div",{tabIndex:1,class:["inputarea"]},[
             elm("div",{class:["inputelm"]},[
@@ -306,7 +306,7 @@ button.toggle {
 .periodic {
     padding: 10px;
     table-layout: fixed;
-    width: fit-content;
+    width: 100%;
     height: fit-content;
     & td {
         font-size: var(--periodictable-fontsize);
