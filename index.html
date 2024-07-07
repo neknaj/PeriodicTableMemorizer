@@ -55,7 +55,7 @@ initlayout(
                 updatePeriodicTable();
             }),
         ])},
-        history: ()=>{return elm("h1",{},[textelm("history")])},
+        history: ()=>{return elm("textarea",{id:"history",readonly:true},[])},
         score: ()=>{return elm("h1",{},[textelm("score")])},
         result: ()=>{return elm("h1",{},[textelm("result")])},
         empty: ()=>{return elm("h1",{},[textelm("empty")])},
@@ -105,6 +105,11 @@ document.querySelector(".inputarea").addEventListener("keydown",(e)=>{
     }
     else if (e.key=="Enter"||e.key==" ") {
         const res = checkInput(state.inputtext);
+        const elm = document.querySelector("#history");
+        elm.value += `${state.inputtext} ${res!=false} ${Date.now()}\n`
+        if (elm.scrollHeight-(elm.scrollTop+elm.offsetHeight)<30) {
+            elm.scrollTop = elm.scrollHeight;
+        }
         if (res!=false) {
             state.flag[res[0]][res[1]] = true;
         }
@@ -265,4 +270,15 @@ button.toggle {
     50% {opacity:1;}
     100% {opacity:0;}
 }
+
+#history {
+    overflow: scroll;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    outline: none;
+    border: none;
+    resize: none;
+}
+
 </style>
