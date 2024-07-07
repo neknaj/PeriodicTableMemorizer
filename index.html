@@ -2,7 +2,7 @@
 <html>
     <head>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/neknaj/webSplitLayout@latest/type1/layout.css"></head>
-        <script src="https://cdn.jsdelivr.net/gh/neknaj/webSplitLayout@latest/type1/layout.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/neknaj/webSplitLayout@1.0/type1/layout.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/neknaj/cDom@latest/cdom.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/neknaj/screenkeyboard@latest/flickinput.js"></script>
         <meta property="og:title" content="PeriodicTable Memorizer">
@@ -64,17 +64,25 @@ initlayout(
     document.querySelector("body"),
     ["h",[2,1],[
         ["h",[5,1],[
-            ["v",[4,1],[["c","table"],["h",[1,3],[["c","config"],["c","input"]]]]],
+            ["v",[4,1],[["c","table"],["h",[1,2],[["c","config"],["c","input"]]]]],
             ["v",[5,2],[["c","history"],["c","score"]]],
         ]],
         ["c","keyboard"],
     ]],
     {
-        table: ()=>{return elm("table",{class:["periodic"]},periodicTable.map((i)=>{
-            return elm("tr",{},i.map((j)=>{
-                return j?elm("td",{class:["dark"]},[elm("p",{},[textelm(j)])]):elm("td",{},[]);
-            }))
-        }))},
+        table: ()=>{
+            let table = elm("table",{class:["periodic"]},periodicTable.map((i)=>{
+                return elm("tr",{},i.map((j)=>{
+                    return j?elm("td",{class:["dark"]},[elm("p",{},[textelm(j)])]):elm("td",{},[]);
+                }))
+            }));
+            setInterval(() => {
+                table.style.setProperty('--periodictable-fontsize',
+                    (table.getBoundingClientRect().width/periodicTable[0].length/2)+"px"
+                );
+            }, 10);
+            return elm("div",{class:"center"},[table]);
+        },
         input: ()=>{return elm("div",{tabIndex:1,class:["inputarea"]},[
             elm("div",{class:["inputelm"]},[
                 elm("span",{class:["inputtext"]},[]),
@@ -118,7 +126,9 @@ initlayout(
                     console.log(area,cnv.parentElement)
                     FlickInput(cnv,screenKeyboardLabel,area.width,Math.min(area.width,area.height));
                 },1)
+                console.log(cnv.parentElement.parentElement.parentElement.parentElement)
                 cnv.parentElement.addEventListener("resize",resize,true)
+                cnv.parentElement.parentElement.parentElement.parentElement.addEventListener("resize",resize,true)
             })
             window.addEventListener("resize",resize)
             return cnv;
@@ -289,15 +299,15 @@ button.toggle {
     width: fit-content;
     height: fit-content;
     & td {
-        font-size: 20px;
+        font-size: var(--periodictable-fontsize);
         width: 100%;
         height: 100%;
         & p {
+            text-align: center;
             border: 1px solid black;
-            width: calc(100% - 10px);
-            height: calc(100% - 10px);
-            border-radius: 10px;
-            padding: 5px;
+            width: 100%;
+            height: 100%;
+            border-radius: calc(var(--periodictable-fontsize) /5);
             margin: 0;
             background-color: rgba(240, 248, 255, 0.2);
         }
