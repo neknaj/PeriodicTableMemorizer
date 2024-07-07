@@ -106,6 +106,17 @@ initlayout(
                     return elm;
                 })(),
             ]),
+            elm("div",{},[
+                elm("span",{},[textelm("Full Screen")]),
+                toggleButton().Listen("click",(e)=>{
+                    if (e.target.dataset.stat=="on") {
+                        document.querySelector("body").requestFullscreen()
+                    }
+                    else {
+                        document.exitFullscreen()
+                    }
+                }),
+            ]),
         ])},
         keyboard: ()=>{
             let cnv = elm("canvas",{class:"center",id:"screenkeyboard"},[]).Listen("flick",(e)=>{
