@@ -32,7 +32,7 @@ const periodicTable = [
 initlayout(
     document.querySelector("body"),
     ["h",[5,1],[
-        ["v",[4,1],[["c","table"],["c","input"]]],
+        ["v",[4,1],[["c","table"],["h",[1,3],[["c","config"],["c","input"]]]]],
         ["v",[5,2],[["c","history"],["c","score"]]],
     ]],
     {
@@ -48,6 +48,13 @@ initlayout(
             ]),
             elm("p",{},[textelm("Enter any element symbol in the box above")]),
         ])},
+        config: ()=>{return elm("div",{},[
+            elm("span",{},[textelm("Unentered Element")]),
+            toggleButton("dark","hide").Listen("click",(e)=>{
+                state.uestyle = e.target.dataset.stat=="on"?"dark":"hide";
+                updatePeriodicTable();
+            }),
+        ])},
         history: ()=>{return elm("h1",{},[textelm("history")])},
         score: ()=>{return elm("h1",{},[textelm("score")])},
         result: ()=>{return elm("h1",{},[textelm("result")])},
@@ -55,12 +62,21 @@ initlayout(
     }
 )
 
+function toggleButton(onText,offText) {
+    return elm("button",{data:{stat:"off"},class:"toggle"},[
+        elm("span",{class:"on"},[textelm(onText?onText:"on")]),
+        elm("span",{class:"off"},[textelm(offText?offText:"off")]),
+    ]).Listen("click",(e)=>{
+        e.target.dataset.stat = e.target.dataset.stat=="off"? "on": "off";
+    })
+}
+
 const state = {
     inputtext: "",
     start: 0,
     end: 0,
     flag: undefined,
-    nestyle: "hide"
+    uestyle: "hide"
 }
 
 initFlag();
@@ -111,7 +127,7 @@ function updatePeriodicTable() {
             elm.classList.remove("dark");
             elm.classList.remove("hide");
             if (!state.flag[i][j]) {
-                elm.classList.add(state.nestyle);
+                elm.classList.add(state.uestyle);
             }
         }
     }
@@ -154,6 +170,18 @@ body {
 h1 {
     padding: 5px;
     margin: 5px;
+}
+
+button.toggle {
+    & * {
+        pointer-events: none;
+    }
+    &[data-stat="on"] .on {
+        display: none;
+    }
+    &[data-stat="off"] .off {
+        display: none;
+    }
 }
 
 </style>
