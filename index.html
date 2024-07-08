@@ -4,7 +4,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/neknaj/webSplitLayout@latest/type1/layout.css"></head>
         <script src="https://cdn.jsdelivr.net/gh/neknaj/webSplitLayout@1.0/type1/layout.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/neknaj/cDom@latest/cdom.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/neknaj/screenkeyboard@latest/flickinput.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/neknaj/screenkeyboard@1.0/flickinput.js"></script>
         <meta property="og:title" content="PeriodicTable Memorizer">
         <meta property="og:description" content="タイピングで周期表を丸暗記しよう">
         <meta property="twitter:description" content="タイピングで周期表を丸暗記しよう">
@@ -64,24 +64,24 @@ initlayout(
     document.querySelector("body"),
     ["h",[2,1],[
         ["h",[5,1],[
-            ["v",[4,1],[["c","table"],["h",[1,2],[["c","config"],["c","input"]]]]],
+            ["v",[4,1],[["c","main"],["h",[1,2],[["c","config"],["c","input"]]]]],
             ["v",[5,2],[["c","history"],["c","score"]]],
         ]],
         ["c","keyboard"],
     ]],
     {
-        table: ()=>{
+        main: ()=>{
             let table = elm("table",{class:["periodic"]},periodicTable.map((i)=>{
                 return elm("tr",{},i.map((j)=>{
                     return j?elm("td",{class:["dark"]},[elm("p",{},[textelm(j)])]):elm("td",{},[]);
                 }))
             }));
             setInterval(() => {
-                table.style.setProperty('--periodictable-fontsize',
+                document.querySelector("body").style.setProperty('--periodictable-fontsize',
                     (table.parentElement.getBoundingClientRect().width/periodicTable[0].length/2)+"px"
                 );
             }, 10);
-            return elm("div",{class:"center",id:"tablearea"},[table]);
+            return elm("div",{class:"center",id:"tablearea"},[table,elm("div",{id:"apptitle"},[elm("span",{},[textelm("The Periodic Table")]),elm("br",{},[]),elm("span",{},[textelm("of The Elements")])])]);
         },
         input: ()=>{return elm("div",{tabIndex:1,class:["inputarea"]},[
             elm("div",{class:["inputelm"]},[
@@ -129,13 +129,13 @@ initlayout(
             function resize() {
                 var area = cnv.parentElement.getBoundingClientRect();
                 console.log(area,cnv.parentElement)
-                FlickInput(cnv,screenKeyboardLabel,area.width,Math.min(area.width,area.height));
+                FlickInput(cnv,screenKeyboardLabel,area.width,Math.min(area.width*0.8,area.height),4,5);
             }
             document.querySelector("body").addEventListener("doneinitlayout",()=>{
                 window.setTimeout(()=>{
                     var area = cnv.parentElement.getBoundingClientRect();
                     console.log(area,cnv.parentElement)
-                    FlickInput(cnv,screenKeyboardLabel,area.width,Math.min(area.width,area.height));
+                    FlickInput(cnv,screenKeyboardLabel,area.width,Math.min(area.width*0.8,area.height),4,5);
                 },1)
                 console.log(cnv.parentElement.parentElement.parentElement.parentElement)
                 cnv.parentElement.addEventListener("resize",resize,true)
@@ -394,6 +394,18 @@ button.toggle {
 
 #screenkeyboard {
     touch-action: none;
+}
+
+#apptitle {
+    position: absolute;
+    width: calc(var(--periodictable-fontsize) *18);
+    font-size: calc(var(--periodictable-fontsize) *1.5);
+    top: calc(var(--periodictable-fontsize) *0.5);
+    left: calc(var(--periodictable-fontsize) *5);
+    & span:nth-child(3) {
+        display: block;
+        text-align: right;
+    }
 }
 
 </style>
